@@ -1,4 +1,24 @@
-from fastapi.security import OAuth2PasswordBearer
+from datetime import timedelta
+from typing import Annotated
+
+from app.models import User
+from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/auth/login", scheme_name="JWT")
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl='/api/auth/login',
+    scheme_name='JWT'
+)
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    return token
+
+
+
+
+
+
+
+

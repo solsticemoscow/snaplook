@@ -2,4 +2,4 @@
 # from .devices import Device
 # from .tgbot import TGBot
 # from .tasks import Task
-# from .stat import Stat
+from .users import User

@@ -15,6 +15,10 @@ class CloudSettings(BaseSettings):
         env_file_encoding='utf-8'
     )
 
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 600
+    JWT_SECRET_KEY: str = '1232434346ghfgf546'
+    ALGORITHM: str = "HS256"
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 3600
 
     ANTHROPIC_API: str
     OPENAI_API_PROXY: str
@@ -62,7 +66,8 @@ class CloudSettings(BaseSettings):
     #
     # POSTGRES_ASYNC: str
     #
-    # POSTGRES_PROD_ASYNC: str = "postgresql+asyncpg://mlmcloud:QgDY9pa5K2yErV4v@rc1b-xaaf55yqmp37cv4j.mdb.yandexcloud.net:6432/mlmcloud-db"
+    HASH: str = '$2b$12$9lin716qtSneH.Lu6rMpUuNxO0DN9LbjFWE6tB096mq/7edeO5JZC'
+    POSTGRES: str = "postgresql+asyncpg://mlmcloud:QgDY9pa5K2yErV4v@rc1b-xaaf55yqmp37cv4j.mdb.yandexcloud.net:6432/mlmcloud-db"
     #
     # @property
     # def POSTGRES_URL_ASYNC(self) -> PostgresDsn:

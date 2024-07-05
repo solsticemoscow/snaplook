@@ -1,33 +1,36 @@
-# from typing import Annotated
-#
-# from fastapi import APIRouter, Depends
-# from fastapi.security import OAuth2PasswordRequestForm
-# from starlette.status import HTTP_200_OK
-#
-# from app.core.schemas import Token
-# from app.services.auth import AuthService, get_auth_service
-# # from app.services.auth_keycloak import keycloak_process
-#
-# router = APIRouter()
-#
-#
-# @router.post(
-#     path="/login",
-#     status_code=HTTP_200_OK,
-#     summary="Log in to system",
-# )
-# async def login(
-#     form_data: OAuth2PasswordRequestForm = Depends(),
-#     auth_service: AuthService = Depends(get_auth_service),
-# ) -> Token:
-#     """Login with OAuth2 Form"""
-#     return await auth_service.login(form_data)
-#
-# # @router.post(
-# #     path="/login",
-# #     status_code=HTTP_200_OK,
-# #     summary="Log in to system",
-# # )
-# # async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-# #     print(form_data.username)
-# #     return await keycloak_process(form_data.username, form_data.password)
+
+from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from passlib.context import CryptContext
+from starlette.status import HTTP_401_UNAUTHORIZED
+
+from app.config import settings
+
+router = APIRouter()
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+@router.post('/login')
+async def get_login(
+        reusable_oauth2: OAuth2PasswordRequestForm = Depends()
+):
+    if reusable_oauth2.username != 'api':
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail='Invalid username.',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+
+    if not verify_password(plain_password=reusable_oauth2.password, hashed_password=settings.HASH):
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail='Invalid password.',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+    return {"access_token": reusable_oauth2.username, "token_type": "bearer"}
+
+
+
