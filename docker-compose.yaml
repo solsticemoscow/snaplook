@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+#  mlmcloud-db:
+#    container_name: mlmcloud-db
+#    image: postgres:14-alpine
+#    restart: on-failure
+#    environment:
+#      POSTGRES_DB: postgres_db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#    ports:
+#      - '5432:5432'
+#    volumes:
+#      - ./data/pgdata:/var/lib/postgresql/data
+
+  snaplook:
+    container_name: snaplook
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8444
+    ports:
+      - "8444:8444"
+    env_file:
+      - .env
+
+
+
+
+
+
+
+
+
+
+
+
+

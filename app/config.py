@@ -1,0 +1,95 @@
+
+import os
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+
+class CloudSettings(BaseSettings):
+    ROOT_PATH: str = os.path.dirname((__file__))
+
+
+    model_config = SettingsConfigDict(
+        env_file=ROOT_PATH.replace('app', '') + '\.env',
+        extra="allow",
+        env_file_encoding='utf-8'
+    )
+
+
+    ANTHROPIC_API: str
+    OPENAI_API_PROXY: str
+    OPENAI_API: str
+    OPENAI_API_KEY_SNAPLOOK: str
+
+    MODEL_35: str
+    MODEL_4O: str
+    MODEL_VOICE: str
+
+    URL1: str = 'https://i08.fotocdn.net/s214/893a2c375957cc87/public_pin_l/2881840177.jpg'
+
+    PROMT1: str = (
+        f'Ты модный стилист. Подбери по 10 вариантов верхней одежды, 3 варианта головных уборов, 3 варианта аксессуаров, 3 варианта обуви, которые максимально подходят к указанному по ссылке предмету гардероба и вместе создают модный образ. '
+        'Для каждого подобранного тобой предмета гардероба составь короткое и точное описание, описывающее его. Не используй вводные фразы, используй только описание товара. Будь конкретен. Описание должно быть очень коротким и понятным. '
+        'Пользователь будет использовать его в качестве поискового запроса на сайте интернет-магазина. Ответ представь строго в json по структуре «item i: description», где i - номер предмета одежды.')
+
+    PROMT2: str = ("Ты - дизайнер одежды. Тщательно опиши каждый предмет одежды, который носит человек на изображении. Постарайся разбить образ на как можно большее количество элементов. "
+     "Если ты сомневаешься, что под одним предметом может скрываться другой, лучше описать оба, чем один, сочетающий в себе свойства обоих. "
+     "Укажи цвет, узор, тип ткани, фасон (например, V-образный вырез, пуговицы), приталенный, прямой или оверсайз, с рукавами или без рукавов, на бретелях или без бретелек, толщину и ширину некоторых частей изделия, отличительные особенности (например, логотипы, украшения) и т.д."
+     "Для каждого элемента одежды указывай мужской, женский или детский. Не используй вводные фразы, используй только описание товара. Будь конкретен. Описание должно быть очень коротким и понятным. ")
+
+    MSGS1: list = [
+            {
+                "role": "system",
+                "content": PROMT1
+            }
+    ]
+
+    MSGS2: list = [
+            {
+                "role": "system",
+                "content": PROMT2
+            }
+    ]
+
+
+    # ################################# DB #################################
+    #
+    # POSTGRES_USER: str
+    # POSTGRES_PASSWORD: str
+    # POSTGRES_DB: str
+    # POSTGRES_PORT: int
+    # POSTGRES_HOST: str
+    #
+    # POSTGRES_ASYNC: str
+    #
+    # POSTGRES_PROD_ASYNC: str = "postgresql+asyncpg://mlmcloud:QgDY9pa5K2yErV4v@rc1b-xaaf55yqmp37cv4j.mdb.yandexcloud.net:6432/mlmcloud-db"
+    #
+    # @property
+    # def POSTGRES_URL_ASYNC(self) -> PostgresDsn:
+    #     return (
+    #         'postgresql+asyncpg://'
+    #         f'{self.POSTGRES_USER}:'
+    #         f'{self.POSTGRES_PASSWORD}@'
+    #         f'{self.POSTGRES_HOST}:'
+    #         f'{self.POSTGRES_PORT}/'
+    #         f'{self.POSTGRES_DB}'
+    #     )
+    #
+    # @property
+    # def POSTGRES_URL_SYNC(self) -> PostgresDsn:
+    #     return (
+    #         'postgresql+psycopg2://'
+    #         f'{self.POSTGRES_USER}:'
+    #         f'{self.POSTGRES_PASSWORD}@'
+    #         f'{self.POSTGRES_HOST}:'
+    #         f'{self.POSTGRES_PORT}/'
+    #         f'{self.POSTGRES_DB}'
+    #     )
+
+
+settings = CloudSettings()
+
+
+
+
+

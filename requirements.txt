@@ -1,0 +1,9 @@
+fastapi
+sqlalchemy
+openai
+uvicorn
+pydantic
+pydantic-settings
+anthropic
+starlette
+gunicorn
