@@ -1,0 +1,11 @@
+/app/data/
+/.ipynb_checkpoints
+/.idea
+/*.ipynb
+/app/__pycache__/
+/app/core/__pycache__/
+
+
+.idea
+.pre-commit-config.yaml
+
