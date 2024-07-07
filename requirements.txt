@@ -1,11 +1,14 @@
 fastapi
 sqlalchemy
+sqlalchemy-utils
 openai
 uvicorn
 pydantic
 pydantic-settings
 anthropic
 starlette
-gunicorn
 requests
 asyncpg
+pandas
+passlib
+jwt

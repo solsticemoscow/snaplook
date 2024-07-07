@@ -1,3 +1,4 @@
+import uuid
 
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
@@ -30,7 +31,7 @@ async def get_login(
             detail='Invalid password.',
             headers={'WWW-Authenticate': 'Bearer'},
         )
-    return {"access_token": reusable_oauth2.username, "token_type": "bearer"}
+    return {"access_token": str(uuid.uuid4()), "token_type": "bearer"}
 
 
 

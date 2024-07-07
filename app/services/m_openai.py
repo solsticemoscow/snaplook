@@ -1,4 +1,5 @@
 import asyncio
+import base64
 
 import requests
 from openai import OpenAI, AsyncOpenAI
@@ -39,8 +40,14 @@ class ClassOAI:
 
     async def get_vision(
             self,
-            base64_image: str
+            image_path: str
     ):
+
+        def encode_image(image_path):
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+
+        base64_image = encode_image(image_path)
 
         headers = {
             "Content-Type": "application/json",
@@ -69,9 +76,15 @@ class ClassOAI:
             "max_tokens": 300
         }
 
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        try:
+            response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-        return response.json()['choices'][0]['message']['content']
+            return response.json()['choices'][0]['message']['content']
+        except Exception as e:
+            return e
+
+
+
 
     def get_text_4o(self, MSGS: list):
         try:
