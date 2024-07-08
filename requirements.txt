@@ -12,3 +12,4 @@ asyncpg
 pandas
 passlib
 jwt
+yookassa

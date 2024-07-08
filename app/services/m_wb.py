@@ -8,15 +8,6 @@ import requests
 
 
 class WildBerriesParser:
-    """
-    A parser object for extracting data from wildberries.ru.
-
-    Attributes:
-        headers (dict): HTTP headers for the parser.
-        run_date (datetime.date): The date when the parser is run.
-        product_cards (list): A list to store the parsed product cards.
-        directory (str): The directory path where the script is located.
-    """
 
     def __init__(self):
         """
@@ -108,20 +99,19 @@ class WildBerriesParser:
 
         for item in page_data['data']['products']:
             products_on_page.append({
-                'Ссылка': f"https://www.wildberries.ru/catalog/"
+                'Link': f"https://www.wildberries.ru/catalog/"
                           f"{item['id']}/detail.aspx",
-                'Наименование': item['name'],
-                'Изображение': self.get_pics(item['id']),
-                'Цена': int(item['priceU'] / 100),
-                'Цена со скидкой': int(item['salePriceU'] / 100),
-                'Рейтинг': item['rating'],
-                'Отзывы': item['feedbacks']
+                'Name': item['name'],
+                'Image': self.get_pics(item['id']),
+                'Price': int(item['priceU'] / 100),
+                'Sale': int(item['salePriceU'] / 100),
+                'Rating': item['rating'],
+                'Feed': item['feedbacks']
             })
             time.sleep(.2)
             if len(products_on_page) == 8:
                 break
         return products_on_page
-
 
     def get_all_products_in_category(self, category_data: tuple):
         """
@@ -198,8 +188,6 @@ class WildBerriesParser:
         response = requests.get(url, headers=self.headers).json()
         page_data = self.get_products_on_page(response)
         return page_data
-
-
 
     def get_pics(self, ID: int):
         _short_id = ID//100000

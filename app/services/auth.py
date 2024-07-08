@@ -8,9 +8,7 @@ from datetime import datetime
 from app.core.db import db_session
 
 from app.config import settings
-
-
-
+from app.models import Users
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl='/api/auth/login',
@@ -21,7 +19,7 @@ reusable_oauth2 = OAuth2PasswordBearer(
 def get_current_user(
             db_session: Session = Depends(db_session),
             token: str = Depends(reusable_oauth2)
-) -> m.User:
+):
     try:
         payload = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[settings.ALGORITHM]
@@ -40,7 +38,7 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     try:
-        user = db_session.query(User).filter_by(login=payload['sub']).one_or_none()
+        user = db_session.query(Users).filter_by(login=payload['sub']).one_or_none()
     except Exception:
         raise HTTPException(status_code=404, detail='User not found')
 

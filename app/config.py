@@ -20,14 +20,11 @@ class CloudSettings(BaseSettings):
     ALGORITHM: str = "HS256"
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 3600
 
-    ANTHROPIC_API: str
-    OPENAI_API_PROXY: str
-    OPENAI_API: str
-    OPENAI_API_KEY_SNAPLOOK: str
+    OPENAI_API_KEY_SNAPLOOK: str = 'sk-proj-jRKGH5SgNyMvuKPkRz3MT3BlbkFJ9n1UknvcU80zePpEOhgN'
 
-    MODEL_35: str
-    MODEL_4O: str
-    MODEL_VOICE: str
+    YOUKASSA: str = 'live_XiSIJrDmYBOALOLtfoHeCwGxafqBxUrWzgvcFZCiteQ'
+    SHOP_ID: int = '966304'
+
 
     URL1: str = 'https://i08.fotocdn.net/s214/893a2c375957cc87/public_pin_l/2881840177.jpg'
 
@@ -56,41 +53,8 @@ class CloudSettings(BaseSettings):
             }
     ]
 
-
-    # ################################# DB #################################
-    #
-    # POSTGRES_USER: str
-    # POSTGRES_PASSWORD: str
-    # POSTGRES_DB: str
-    # POSTGRES_PORT: int
-    # POSTGRES_HOST: str
-    #
-    # POSTGRES_ASYNC: str
-    #
     HASH: str = '$2b$12$9lin716qtSneH.Lu6rMpUuNxO0DN9LbjFWE6tB096mq/7edeO5JZC'
-    POSTGRES: str = "postgresql+asyncpg://mlmcloud:QgDY9pa5K2yErV4v@rc1b-xaaf55yqmp37cv4j.mdb.yandexcloud.net:6432/mlmcloud-db"
-    #
-    # @property
-    # def POSTGRES_URL_ASYNC(self) -> PostgresDsn:
-    #     return (
-    #         'postgresql+asyncpg://'
-    #         f'{self.POSTGRES_USER}:'
-    #         f'{self.POSTGRES_PASSWORD}@'
-    #         f'{self.POSTGRES_HOST}:'
-    #         f'{self.POSTGRES_PORT}/'
-    #         f'{self.POSTGRES_DB}'
-    #     )
-    #
-    # @property
-    # def POSTGRES_URL_SYNC(self) -> PostgresDsn:
-    #     return (
-    #         'postgresql+psycopg2://'
-    #         f'{self.POSTGRES_USER}:'
-    #         f'{self.POSTGRES_PASSWORD}@'
-    #         f'{self.POSTGRES_HOST}:'
-    #         f'{self.POSTGRES_PORT}/'
-    #         f'{self.POSTGRES_DB}'
-    #     )
+    POSTGRES: str = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/postgres_db"
 
 
 settings = CloudSettings()

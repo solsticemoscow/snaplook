@@ -1,9 +1,11 @@
-import json
+
 import os
-from typing import Annotated
+
 
 from fastapi import APIRouter, Depends, UploadFile, File
+from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
+from starlette.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 from app.config import settings
 from app.services.m_openai import ClassOpenAI
@@ -21,18 +23,28 @@ async def get_url(
 
     try:
         response = await UtilsClass.add_dialog_stylist(content=url, role='user')
+
         result: str = await ClassOpenAI.get_text(response)
 
         result_list: list = result.replace('\n', '').rsplit(',')
+
 
         for item in result_list:
             all_results.append(ClassWB.get_all_products_in_search_result(key_word=item)[:3])
 
 
-        return all_results
+        return JSONResponse(
+            status_code=HTTP_200_OK,
+            content=all_results,
+        )
 
     except Exception as e:
-        return e
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f'Error to proceed url: {e}',
+        )
+
+
 
 
 
@@ -44,24 +56,27 @@ async def get_image(
     all_results = []
     filepath = settings.ROOT_PATH + f"/files/{file.filename}"
 
-    print(filepath)
-
     try:
         with open(filepath, "wb") as buffer:
             buffer.write(file.file.read())
 
 
         result: str = await ClassOpenAI.get_vision(image_path=filepath)
-        print(result)
         result_list: list = result.replace('\n', '').rsplit(',')
 
         for item in result_list:
             all_results.append(ClassWB.get_all_products_in_search_result(key_word=item)[:8])
 
-        return all_results
+        return JSONResponse(
+                status_code=HTTP_200_OK,
+                content=all_results,
+        )
 
     except Exception as e:
-        return e
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f'Error to proceed image: {e}',
+        )
     finally:
         os.remove(filepath)
 

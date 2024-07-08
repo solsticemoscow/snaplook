@@ -1,61 +1,37 @@
+import hashlib
 import uuid
+from datetime import datetime
 
-import sqlalchemy as sa
+from sqlalchemy import BigInteger, String, Integer, Boolean, DateTime, func
 from sqlalchemy_utils import UUIDType
-from sqlalchemy.orm import Session, relationship, backref, DeclarativeBase
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound
-
-from app.core.security import get_hashed_password, verify_password
+from sqlalchemy.orm import Session, DeclarativeBase, Mapped, mapped_column
 
 
 class DBModel(DeclarativeBase):
-    """Base class for SQLAlchemy models"""
     pass
 
 
-class User(DBModel):
-    __tablename__ = 'users'
-
-    id = sa.Column(UUIDType(), primary_key=True, default=uuid.uuid4)
-    number = sa.Column(sa.BigInteger, primary_key=True, autoincrement=True, nullable=False)
-    login = sa.Column(sa.String(200), index=True, unique=True, nullable=False)
-    password_hash = sa.Column(sa.String(200), nullable=False)
 
 
-    is_active = sa.Column(sa.Boolean, default=True, nullable=False)
-    created_at = sa.Column(sa.DateTime(), server_default=sa.func.now(), nullable=False)
+class Users(DBModel):
+    __tablename__ = 'Users'
+
+    unique_id: Mapped[str] = mapped_column(String(100), primary_key=True)
+
+    login: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String(200), nullable=True, unique=False)
+
+    telegram: Mapped[int] = mapped_column(BigInteger, nullable=True)
+    yandex: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    email: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(), default=func.now(), nullable=False)
 
 
 
-    @property
-    def password(self):
-        raise AttributeError(f'Password property is write-only')
 
-    @password.setter
-    def password(self, password_string: str):
-        self.password_hash = get_hashed_password(password_string)
 
-    @classmethod
-    def authenticate(cls, db_session: Session, login: str, password: str):
-        try:
-            user = cls.get_by_login(db_session, login=login)
-        except (NoResultFound, MultipleResultsFound):
-            return None
-        if not verify_password(password, user.password_hash):
-            return None
-        return user
 
-    @classmethod
-    def get_by_login(cls, db_session: Session, login: str, active_only=True):
-        users_query = db_session.query(cls).filter_by(login=login)
-        if active_only:
-            users_query = users_query.filter_by(is_active=True)
-        return users_query.one()
 
-    @classmethod
-    def get_by_id(cls, db_session: Session, id: int, active_only=True):
-        user = db_session.get(cls, id)
-        if active_only:
-            return user if user.is_active else None
-        else:
-            return user
+
