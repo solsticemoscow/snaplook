@@ -27,5 +27,12 @@ class UserChange(BaseSchema):
     email: Optional[EmailStr] | None = None
 
 
+class PaymentRequest(BaseSchema):
+    login: str
+    sum: int = 10
+    description: str = 'Test payment.'
 
-
+class RefundRequest(BaseSchema):
+    login: str
+    sum: int = 10
+    payment_id: str = 'Test refund.'

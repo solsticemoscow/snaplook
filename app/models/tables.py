@@ -33,31 +33,31 @@ class Users(DBModel):
     images_per_month: Mapped[int] = mapped_column(Integer, default=5)
 
     tarif_of_user: Mapped[enum] = mapped_column(ENUM(TarifType), default=TarifType.FREE)
-    #
-    # def __init__(self, **kw: Any):
-    #     super().__init__(**kw)
-    #     self.limit_urls = self.urls_per_month
-    #     self.limit_images = self.images_per_month
-    #     self.last_purchase_date = self.last_purchase_date
-    #
-    # @property
-    # def remaining_limit(self):
-    #     current_date = func.now()
-    #     if current_date.month != self.last_purchase_date.month:
-    #         self.last_purchase_date = current_date
-    #     return self.limit_urls, self.limit_images
-    #
-    # def run_url(self):
-    #     if self.limit_urls > self.urls_per_month:
-    #         raise ValueError("Limit of urls exceeded.")
-    #     else:
-    #         self.urls_per_month -= 1
-    #
-    # def run_image(self):
-    #     if self.limit_images > self.images_per_month:
-    #         raise ValueError("Limit of images exceeded.")
-    #     else:
-    #         self.images_per_month -= 1
+
+    def __init__(self, **kw: Any):
+        super().__init__(**kw)
+        self.limit_urls = self.urls_per_month
+        self.limit_images = self.images_per_month
+        self.last_purchase_date = self.last_purchase_date
+
+    @property
+    def remaining_limit(self):
+        current_date = func.now()
+        if current_date.month != self.last_purchase_date.month:
+            self.last_purchase_date = current_date
+        return self.limit_urls, self.limit_images
+
+    def run_url(self):
+        if self.limit_urls > self.urls_per_month:
+            raise ValueError("Limit of urls exceeded.")
+        else:
+            self.urls_per_month -= 1
+
+    def run_image(self):
+        if self.limit_images > self.images_per_month:
+            raise ValueError("Limit of images exceeded.")
+        else:
+            self.images_per_month -= 1
 
 
 

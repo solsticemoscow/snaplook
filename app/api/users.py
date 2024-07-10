@@ -30,7 +30,7 @@ async def create_user(
         # _: Annotated[Users, Depends(get_current_user)],
         db_session: AsyncSession = Depends(db_session),
 
-) -> Union[User, HTTP_400_BAD_REQUEST]:
+):
 
 
     password_hash = hashlib.sha256(user.password.encode('utf-8')).hexdigest()
@@ -72,7 +72,7 @@ async def update_user(
         email: str = None,
         # _: Annotated[User, Depends(get_current_user)],
         db_session: AsyncSession = Depends(db_session),
-) -> Union[User, HTTP_400_BAD_REQUEST]:
+):
 
     if not (login or email):
         raise HTTPException(
@@ -129,6 +129,7 @@ async def delete_user(
         # _: Annotated[User, Depends(get_current_user)],
         db_session: AsyncSession = Depends(db_session),
 ):
+
     async with db_session:
         stmt = select(Users).where(Users.login == login)
         result = await db_session.execute(statement=stmt)

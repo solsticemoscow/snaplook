@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../mlmcloud/.idea/mlmcloud_stable.iml" filepath="$PROJECT_DIR$/../../mlmcloud/.idea/mlmcloud_stable.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/snaplook.iml" filepath="$PROJECT_DIR$/.idea/snaplook.iml" />
     </modules>
   </component>

@@ -25,7 +25,6 @@ class CloudSettings(BaseSettings):
     YOUKASSA: str = 'live_XiSIJrDmYBOALOLtfoHeCwGxafqBxUrWzgvcFZCiteQ'
     SHOP_ID: int = '966304'
 
-
     URL1: str = 'https://i08.fotocdn.net/s214/893a2c375957cc87/public_pin_l/2881840177.jpg'
 
     PROMT1: str = (
