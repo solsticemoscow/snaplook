@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import datetime
 import uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class BaseSchema(BaseModel):
@@ -13,13 +13,19 @@ class BaseSchema(BaseModel):
 
 
 class User(BaseSchema):
-    unique_id: str
-    login: str
-    password: str
-    email: str
-    telegram: Optional[int]
-    yandex: Optional[bool]
-    is_active: bool
-    created_at: datetime
+    login: str = None
+    password: str = None
+    email: EmailStr = None
+    telegram: Optional[int] = None
+    yandex: Optional[bool] = None
+    is_active: bool = None
+    created_at: datetime = None
+
+
+class UserChange(BaseSchema):
+    password: Optional[str] | None = None
+    email: Optional[EmailStr] | None = None
+
+
 
 

@@ -1,9 +1,10 @@
 import hashlib
 import uuid
-from typing import Annotated
+from typing import Annotated, Optional, Union
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import insert, delete, select
+from pydantic import EmailStr
+from sqlalchemy import insert, delete, select, or_, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.exceptions import HTTPException
@@ -11,7 +12,7 @@ from starlette.responses import JSONResponse
 from starlette.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 
 from app.core.auth import get_current_user
-from app.core.schemas import User
+from app.core.schemas import User, UserChange
 from app.core.db import db_session
 from app.models import Users
 
@@ -20,7 +21,8 @@ router = APIRouter()
 
 @router.post(
     path='/create_user',
-    status_code=HTTP_201_CREATED,
+    response_model=User,
+    status_code=HTTP_200_OK,
     summary='Add new user',
 )
 async def create_user(
@@ -28,14 +30,23 @@ async def create_user(
         # _: Annotated[Users, Depends(get_current_user)],
         db_session: AsyncSession = Depends(db_session),
 
-):
-    try:
+) -> Union[User, HTTP_400_BAD_REQUEST]:
 
-        password_hash = hashlib.sha256(user.password.encode('utf-8')).hexdigest()
 
-        async with db_session:
+    password_hash = hashlib.sha256(user.password.encode('utf-8')).hexdigest()
+
+    async with db_session:
+        stmt = select(Users).filter(or_(Users.login == user.login, Users.email == user.email))
+        result = await db_session.execute(statement=stmt)
+        user_in_db = result.one_or_none()
+
+        if user_in_db:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=f'User already created.',
+            )
+        else:
             stmt = insert(Users).values(
-                unique_id=str(uuid.uuid4()),
                 login=user.login,
                 password=password_hash,
                 email=user.email
@@ -43,45 +54,69 @@ async def create_user(
             await db_session.execute(statement=stmt)
             await db_session.commit()
 
-        return JSONResponse(
+            return JSONResponse(
                 status_code=HTTP_200_OK,
-                content=f'User {user.login} successfuly created.',
+                content=f'User successfuly created: {user}',
             )
-
-    except Exception:
-        raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail=f'User {user.login} already created.',
-        )
 
 
 @router.patch(
-    path='/update_user/{user_login}',
-    summary='Change user'
+    path='/update_user',
+    summary='Change user',
+    response_model=User,
+    status_code=HTTP_200_OK,
 )
 async def update_user(
-        user_login: str,
+        user: User,
+        login: str = None,
+        email: str = None,
         # _: Annotated[User, Depends(get_current_user)],
         db_session: AsyncSession = Depends(db_session),
-):
-    try:
+) -> Union[User, HTTP_400_BAD_REQUEST]:
 
-        password_hash = hashlib.sha256(user.password.encode('utf-8')).hexdigest()
+    if not (login or email):
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f'Must fill login or email field.',
+        )
 
-        async with db_session:
-            stmt = insert(Users).values(
-                unique_id=str(uuid.uuid4()),
-                login=user.login,
-                password=password_hash,
-                email=user.email
-            )
+    async with db_session:
+        stmt = select(Users).filter(or_(Users.login == login, Users.email == email))
+        result = await db_session.execute(statement=stmt)
+        user_in_db = result.one_or_none()
+
+        if user_in_db:
+            stmt = update(Users).where(or_(Users.login == login, Users.email == email)).values(user.model_dump(exclude_unset=True))
             await db_session.execute(statement=stmt)
             await db_session.commit()
 
-        return f'User {user.login} successfuly created.'
+            # if user.password:
+            #     stmt = update(Users).where(or_(Users.login == login, Users.email == email)).values(
+            #         password=user.password)
+            #     await db_session.execute(statement=stmt)
+            #     await db_session.commit()
+            # elif user.email:
+            #     stmt = update(Users).where(or_(Users.login == login, Users.email == email)).values(
+            #         email=user.email)
+            #     await db_session.execute(statement=stmt)
+            #     await db_session.commit()
+            # else:
+            #     stmt = update(Users).where(or_(Users.login == login, Users.email == email)).values(
+            #         email=user.email, password=user.password)
+            #     await db_session.execute(statement=stmt)
+            #     await db_session.commit()
 
-    except Exception:
-        return f'User {user.login} already created.'
+            return JSONResponse(
+                status_code=HTTP_200_OK,
+                content=f'User successfuly changed: {user}',
+            )
+
+        else:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=f'User not found in DB.',
+            )
+
 
 
 @router.delete(
@@ -90,27 +125,28 @@ async def update_user(
     summary='Delete user',
 )
 async def delete_user(
-        user_login: str,
+        login: str,
         # _: Annotated[User, Depends(get_current_user)],
         db_session: AsyncSession = Depends(db_session),
 ):
-    try:
-        async with db_session:
-            stmt = select(Users).where(
-                login=user_login,
+    async with db_session:
+        stmt = select(Users).where(Users.login == login)
+        result = await db_session.execute(statement=stmt)
+        user_in_db = result.one_or_none()
+
+        if user_in_db:
+            stmt = delete(Users).where(Users.login == login)
+            await db_session.execute(statement=stmt)
+            await db_session.commit()
+
+
+            return JSONResponse(
+                status_code=HTTP_200_OK,
+                content=f'User successfuly deleted: {login}',
             )
-            result = await db_session.execute(statement=stmt)
-            user = result.one_or_none()
-            if user:
-                stmt = delete(Users).where(
-                    login=user_login,
-                )
-                await db_session.execute(statement=stmt)
-                await db_session.commit()
 
-                return f'User {user_login} successfuly deleted.'
-            else:
-                return f'User {user_login} not found.'
-
-    except Exception as e:
-        return e
+        else:
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=f'User not found in DB.',
+            )

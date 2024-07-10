@@ -1,7 +1,6 @@
 from enum import Enum, EnumMeta
 
 
-
 class ContainsMeta(EnumMeta):
     def __contains__(cls, item):
         try:

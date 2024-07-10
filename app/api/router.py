@@ -7,8 +7,10 @@ from app.api.system import router as system_router
 
 router = APIRouter()
 
-router.include_router(users_router, prefix='/users')
-router.include_router(auth_router, prefix='/auth')
-router.include_router(system_router, prefix='/system')
+router.include_router(auth_router, prefix='/auth', tags=["Auth"])
+router.include_router(system_router, prefix='/system', tags=["System"])
+router.include_router(users_router, prefix='/users', tags=["Users"])
+
+
 
 

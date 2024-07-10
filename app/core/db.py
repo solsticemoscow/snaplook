@@ -1,7 +1,7 @@
 import asyncio
 import hashlib
 
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from app.config import settings
@@ -25,15 +25,12 @@ async def db_session() -> AsyncSession:
 # async def test():
 #
 #     async with async_db_session() as dbsession:
-#         password_hash = hashlib.sha256("user.password".encode('utf-8')).hexdigest()
 #
-#         stmt = insert(Users).values(
-#             login="sdfesg",
-#             password=password_hash,
-#             email="user.email"
+#         stmt = select(Users).where(
+#             Users.login == "2"
 #         )
-#         await dbsession.execute(statement=stmt)
-#         await dbsession.commit()
+#         result = await dbsession.execute(statement=stmt)
+#         print(result.one_or_none())
 #
 #
 #
