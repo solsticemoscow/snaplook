@@ -1,8 +1,12 @@
+import enum
 from typing import Optional
 from datetime import datetime
 import uuid
 
 from pydantic import BaseModel, EmailStr
+from sqlalchemy import func
+
+from app.models.enums import TarifType
 
 
 class BaseSchema(BaseModel):
@@ -18,8 +22,14 @@ class User(BaseSchema):
     email: EmailStr = None
     telegram: Optional[int] = None
     yandex: Optional[bool] = None
+
     is_active: bool = None
     created_at: datetime = None
+
+    limit_urls: int = 20
+    limit_images: int = 5
+    purchase_date: datetime = func.now()
+    tarif_of_user: TarifType = TarifType.FREE
 
 
 class UserChange(BaseSchema):

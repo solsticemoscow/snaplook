@@ -1,6 +1,15 @@
 version: '3'
 services:
 
+#  front:
+#    container_name: front
+#    build:
+#      context: .
+#      dockerfile: ./snaplook-frontend/Dockerfile
+#    restart: on-failure
+#    ports:
+#      - '3000:3000'
+
   db:
     container_name: db
     image: postgres:14-alpine

@@ -126,7 +126,7 @@ ClassYK = ClassYouKassa()
 
 
 
-
+print(ClassYK.create_payment())
 
 
 

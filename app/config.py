@@ -22,8 +22,8 @@ class CloudSettings(BaseSettings):
 
     OPENAI_API_KEY_SNAPLOOK: str = 'sk-proj-jRKGH5SgNyMvuKPkRz3MT3BlbkFJ9n1UknvcU80zePpEOhgN'
 
-    YOUKASSA: str = 'live_XiSIJrDmYBOALOLtfoHeCwGxafqBxUrWzgvcFZCiteQ'
-    SHOP_ID: int = '966304'
+    YOUKASSA: str = 'live_0oIeiSweV-rfiWDHtmxOePqNGsBsgRgJnLjwtQh-RA8'
+    SHOP_ID: int = '369704'
 
     URL1: str = 'https://i08.fotocdn.net/s214/893a2c375957cc87/public_pin_l/2881840177.jpg'
 
